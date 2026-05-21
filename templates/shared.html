@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Download File - Cloud Storage</title>
+	<link rel="stylesheet" href="/static/styles.css" />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+	<style>
+		.download-page {
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+		}
+		
+		.download-card {
+			background: rgba(255, 255, 255, 0.08);
+			backdrop-filter: blur(20px);
+			-webkit-backdrop-filter: blur(20px);
+			border: 1px solid rgba(255, 255, 255, 0.15);
+			border-radius: 24px;
+			padding: 40px;
+			text-align: center;
+			max-width: 500px;
+			width: 100%;
+			box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+		}
+		
+		.file-preview-icon {
+			font-size: 5rem;
+			margin-bottom: 20px;
+			display: inline-block;
+			animation: float 3s ease-in-out infinite;
+		}
+		
+		@keyframes float {
+			0%, 100% { transform: translateY(0); }
+			50% { transform: translateY(-10px); }
+		}
+		
+		.file-info h2 {
+			color: #fff;
+			font-weight: 600;
+			margin-bottom: 10px;
+			word-break: break-word;
+		}
+		
+		.file-meta {
+			color: #9ca3af;
+			margin-bottom: 30px;
+		}
+		
+		.file-meta span {
+			display: inline-block;
+			margin: 0 10px;
+		}
+		
+		.file-meta i {
+			margin-right: 5px;
+		}
+		
+		.btn-download {
+			background: linear-gradient(135deg, #10b981, #059669);
+			border: none;
+			color: #fff;
+			padding: 15px 40px;
+			font-size: 1.1rem;
+			border-radius: 12px;
+			transition: all 0.3s ease;
+			text-decoration: none;
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+		}
+		
+		.btn-download:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+			color: #fff;
+		}
+		
+		.expired-card {
+			text-align: center;
+			padding: 40px;
+		}
+		
+		.expired-icon {
+			font-size: 4rem;
+			color: #ef4444;
+			margin-bottom: 20px;
+		}
+		
+		.brand-header {
+			position: absolute;
+			top: 20px;
+			left: 50%;
+			transform: translateX(-50%);
+			text-align: center;
+		}
+		
+		.brand-header a {
+			text-decoration: none;
+		}
+		
+		.expired-card h3 {
+			color: #fff;
+			margin-bottom: 10px;
+		}
+		
+		.expired-card p {
+			color: #9ca3af;
+		}
+		
+		.powered-by {
+			margin-top: 30px;
+			padding-top: 20px;
+			border-top: 1px solid rgba(255, 255, 255, 0.1);
+			color: #6b7280;
+			font-size: 0.875rem;
+		}
+		
+		.powered-by a {
+			color: #a78bfa;
+			text-decoration: none;
+		}
+		
+		.powered-by a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+<body>
+	<div class="brand-header">
+		<a href="/" class="d-flex align-items-center">
+			<i class="bi bi-cloud-arrow-up-fill me-2 text-primary fs-4"></i>
+			<span class="brand-title fs-5">Cloud Storage</span>
+		</a>
+	</div>
+
+	<div class="download-page">
+		{% if valid %}
+		<div class="download-card">
+			<div class="file-preview-icon" id="fileIcon">
+				<i class="bi bi-{{ icon_class }}"></i>
+			</div>
+			
+			<div class="file-info">
+				<h2>{{ filename }}</h2>
+				<div class="file-meta">
+					<span><i class="bi bi-hdd"></i>{{ file_size }}</span>
+					<span><i class="bi bi-file-earmark"></i>{{ content_type }}</span>
+				</div>
+			</div>
+			
+			<a href="/shared/{{ token }}?download=1" class="btn btn-download">
+				<i class="bi bi-download"></i>
+				Download File
+			</a>
+			
+			<p class="text-muted mt-4 mb-0" style="font-size: 0.875rem;">
+				<i class="bi bi-shield-check me-1"></i>
+				Secure file shared via Cloud Storage
+			</p>
+			
+			<div class="powered-by">
+				Powered by <a href="/">Cloud Storage</a>
+			</div>
+		</div>
+		{% else %}
+		<div class="download-card expired-card">
+			<div class="expired-icon">
+				<i class="bi bi-exclamation-circle-fill"></i>
+			</div>
+			<h3>Link Expired or Invalid</h3>
+			<p>This share link has expired or is no longer available.</p>
+			<a href="/" class="btn btn-outline-light mt-3">
+				<i class="bi bi-house me-2"></i>Go Home
+			</a>
+		</div>
+		{% endif %}
+	</div>
+	
+	{% if valid %}
+	<script>
+		document.getElementById('fileIcon').querySelector('i').style.color = '{{ icon_color }}';
+		
+		document.querySelector('.btn-download').addEventListener('click', function(e) {
+			const btn = this;
+			btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Downloading...';
+			btn.style.pointerEvents = 'none';
+			
+			// Create a hidden iframe to handle the download without leaving the page
+			const iframe = document.createElement('iframe');
+			iframe.style.display = 'none';
+			iframe.src = btn.href;
+			document.body.appendChild(iframe);
+			
+			// Restore button after download starts
+			setTimeout(() => {
+				btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Downloaded!';
+				btn.classList.remove('btn-download');
+				btn.classList.add('btn', 'btn-success');
+				
+				setTimeout(() => {
+					btn.innerHTML = '<i class="bi bi-download"></i>Download File';
+					btn.classList.add('btn-download');
+					btn.classList.remove('btn-success');
+					btn.style.pointerEvents = 'auto';
+				}, 3000);
+			}, 1500);
+			
+			e.preventDefault();
+		});
+	</script>
+	{% endif %}
+</body>
+</html>

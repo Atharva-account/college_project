@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Profile - Cloud Storage</title>
+	<link rel="stylesheet" href="/static/styles.css" />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+	<style>
+		.profile-page {
+			padding-top: 40px;
+		}
+		
+		.profile-header {
+			background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 24px;
+			padding: 40px;
+			text-align: center;
+			margin-bottom: 30px;
+		}
+		
+		.profile-avatar-large {
+			width: 100px;
+			height: 100px;
+			background: linear-gradient(135deg, #6366f1, #8b5cf6);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 20px;
+			font-size: 3rem;
+			color: white;
+			border: 4px solid rgba(255, 255, 255, 0.1);
+		}
+		
+		.profile-name {
+			font-size: 1.75rem;
+			font-weight: 700;
+			color: #fff;
+			margin-bottom: 8px;
+		}
+		
+		.profile-email {
+			color: #9ca3af;
+			font-size: 1.1rem;
+		}
+		
+		.profile-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			background: rgba(16, 185, 129, 0.2);
+			color: #10b981;
+			padding: 6px 16px;
+			border-radius: 20px;
+			font-size: 0.875rem;
+			font-weight: 500;
+			margin-top: 15px;
+		}
+		
+		.info-card {
+			background: rgba(255, 255, 255, 0.06);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 16px;
+			padding: 25px;
+			height: 100%;
+		}
+		
+		.info-card h5 {
+			color: #fff;
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		
+		.storage-bar-large {
+			height: 20px !important;
+			border-radius: 10px;
+			background: rgba(255, 255, 255, 0.1);
+			overflow: hidden;
+			margin-bottom: 15px;
+		}
+		
+		.storage-bar-fill {
+			height: 100%;
+			background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7);
+			border-radius: 10px;
+			transition: width 0.8s ease;
+		}
+		
+		.storage-info {
+			display: flex;
+			justify-content: space-between;
+			color: #9ca3af;
+			font-size: 0.95rem;
+		}
+		
+		.storage-info strong {
+			color: #fff;
+		}
+		
+		.stat-box {
+			background: rgba(255, 255, 255, 0.05);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 12px;
+			padding: 20px;
+			text-align: center;
+			transition: all 0.3s ease;
+		}
+		
+		.stat-box:hover {
+			background: rgba(255, 255, 255, 0.1);
+			transform: translateY(-3px);
+		}
+		
+		.stat-box i {
+			font-size: 2rem;
+			margin-bottom: 10px;
+			display: block;
+		}
+		
+		.stat-box .stat-number {
+			font-size: 2rem;
+			font-weight: 700;
+			color: #fff;
+		}
+		
+		.stat-box .stat-label {
+			color: #9ca3af;
+			font-size: 0.9rem;
+		}
+		
+		.upgrade-section {
+			background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+			border: 2px solid rgba(99, 102, 241, 0.3);
+			border-radius: 20px;
+			padding: 30px;
+			text-align: center;
+		}
+		
+		.upgrade-section h4 {
+			color: #fff;
+			margin-bottom: 10px;
+		}
+		
+		.upgrade-section p {
+			color: #9ca3af;
+			margin-bottom: 25px;
+		}
+		
+		.plan-card {
+			background: rgba(255, 255, 255, 0.08);
+			border: 1px solid rgba(255, 255, 255, 0.15);
+			border-radius: 16px;
+			padding: 25px;
+			text-align: center;
+			transition: all 0.3s ease;
+		}
+		
+		.plan-card:hover {
+			transform: translateY(-5px);
+			border-color: rgba(99, 102, 241, 0.5);
+			box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+		}
+		
+		.plan-card.featured {
+			border-color: #6366f1;
+			background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+		}
+		
+		.plan-name {
+			color: #fff;
+			font-size: 1.25rem;
+			font-weight: 600;
+			margin-bottom: 10px;
+		}
+		
+		.plan-price {
+			font-size: 2.5rem;
+			font-weight: 700;
+			color: #fff;
+		}
+		
+		.plan-price span {
+			font-size: 1rem;
+			color: #9ca3af;
+			font-weight: 400;
+		}
+		
+		.plan-features {
+			list-style: none;
+			padding: 0;
+			margin: 20px 0;
+			text-align: left;
+		}
+		
+		.plan-features li {
+			color: #e5e7eb;
+			padding: 8px 0;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		
+		.plan-features li:last-child {
+			border-bottom: none;
+		}
+		
+		.plan-features i {
+			color: #10b981;
+		}
+		
+		.btn-back {
+			position: fixed;
+			top: 20px;
+			left: 20px;
+			z-index: 1000;
+		}
+	</style>
+</head>
+<body>
+	<a href="/dashboard" class="btn btn-outline-light btn-sm btn-back">
+		<i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+	</a>
+
+	<nav class="navbar navbar-expand-lg glass-card sticky-top">
+		<div class="container">
+			<a class="navbar-brand d-flex align-items-center" href="/dashboard">
+				<i class="bi bi-cloud-arrow-up-fill me-2 text-primary"></i>
+				<span class="brand-title">Cloud Storage</span>
+			</a>
+			<div class="navbar-nav ms-auto align-items-center gap-3">
+				<a href="/dashboard" class="btn btn-outline-light btn-sm nav-item">
+					<i class="bi bi-folder"></i>
+				</a>
+				<form method="POST" action="/logout" class="nav-item mb-0">
+					<button class="btn btn-outline-light btn-sm" type="submit">
+						<i class="bi bi-box-arrow-right"></i>
+					</button>
+				</form>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container profile-page">
+		<div class="profile-header">
+			<div class="profile-avatar-large">
+				<i class="bi bi-person"></i>
+			</div>
+			<h1 class="profile-name">{{ user_email.split('@')[0] }}</h1>
+			<p class="profile-email">{{ user_email }}</p>
+			<div class="profile-badge">
+				<i class="bi bi-check-circle-fill"></i>
+				Active Account
+			</div>
+		</div>
+
+		<div class="row g-4">
+			<div class="col-lg-6">
+				<div class="info-card">
+					<div class="d-flex justify-content-between align-items-start mb-3">
+						<h5><i class="bi bi-hdd text-primary"></i>Storage Usage</h5>
+						<span class="badge bg-gradient-storage" id="storagePlanBadge">Free Plan</span>
+					</div>
+					<div class="storage-bar-large">
+						<div class="storage-bar-fill" id="storageBar" style="width: 0%"></div>
+					</div>
+					<div class="storage-info">
+						<span><strong id="usedStorage">Loading...</strong> used</span>
+						<span id="totalStorage">of 1 GB</span>
+					</div>
+					<div class="mt-3 text-muted small" id="storageText">
+						Calculating storage usage...
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-6">
+				<div class="info-card">
+					<h5><i class="bi bi-graph-up text-success"></i>Account Statistics</h5>
+					<div class="upgrade-section">
+						<div class="upgrade-card p-3 mb-3" id="upgradeCard">
+							<div class="d-flex align-items-center mb-2">
+								<i class="bi bi-stars text-warning fs-4 me-2"></i>
+								<div>
+									<h6 class="text-white mb-0" id="currentPlan">Free Plan</h6>
+									<small class="text-muted" id="planStorage">1 GB Storage</small>
+								</div>
+							</div>
+							<a href="/payment?plan=pro" class="btn btn-gradient w-100" id="upgradeBtn">
+								<i class="bi bi-arrow-up-circle me-2"></i>Upgrade Now
+							</a>
+						</div>
+					</div>
+					<br></br>
+					<div class="row g-3">
+						<div class="col-6">
+							<div class="stat-box">
+								<i class="bi bi-files text-info"></i>
+								<div class="stat-number" id="totalFiles">-</div>
+								<div class="stat-label">Total Files</div>
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="stat-box">
+								<i class="bi bi-share text-warning"></i>
+								<div class="stat-number" id="sharedFiles">-</div>
+								<div class="stat-label">Shared Files</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="upgrade-section mt-4">
+			<h4><i class="bi bi-stars text-warning me-2"></i>Upgrade Your Storage</h4>
+			<p>Choose a plan that fits your needs and get more storage space</p>
+			
+			<div class="row g-4 justify-content-center">
+				<div class="col-md-4">
+					<div class="plan-card">
+						<div class="plan-name">Free</div>
+						<div class="plan-price">₹0<span>/month</span></div>
+						<ul class="plan-features">
+							<li><i class="bi bi-check-circle-fill"></i> 1 GB Storage</li>
+							<li><i class="bi bi-check-circle-fill"></i> Basic File Sharing</li>
+							<li><i class="bi bi-check-circle-fill"></i> 7-day Share Links</li>
+							<li><i class="bi bi-check-circle-fill"></i> Community Support</li>
+						</ul>
+						<button class="btn btn-outline-light w-100" disabled>Current Plan</button>
+					</div>
+				</div>
+				
+				<div class="col-md-4">
+					<div class="plan-card featured">
+						<div class="plan-name">Pro</div>
+						<div class="plan-price">₹749<span>/month</span></div>
+						<ul class="plan-features">
+							<li><i class="bi bi-check-circle-fill"></i> 10 GB Storage</li>
+							<li><i class="bi bi-check-circle-fill"></i> Advanced Sharing</li>
+							<li><i class="bi bi-check-circle-fill"></i> 30-day Share Links</li>
+							<li><i class="bi bi-check-circle-fill"></i> Priority Support</li>
+						</ul>
+						<a href="/payment?plan=pro" class="btn btn-gradient w-100" id="upgradeProBtn">Upgrade Now</a>
+					</div>
+				</div>
+				
+				<div class="col-md-4">
+					<div class="plan-card">
+						<div class="plan-name">Business</div>
+						<div class="plan-price">₹2,499<span>/month</span></div>
+						<ul class="plan-features">
+							<li><i class="bi bi-check-circle-fill"></i> 100 GB Storage</li>
+							<li><i class="bi bi-check-circle-fill"></i> Team Collaboration</li>
+							<li><i class="bi bi-check-circle-fill"></i> Unlimited Share Links</li>
+							<li><i class="bi bi-check-circle-fill"></i> 24/7 Support</li>
+						</ul>
+						<a href="/payment?plan=business" class="btn btn-outline-light w-100" id="upgradeBusinessBtn">Upgrade Now</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		const apiBase = '';
+		
+		async function fetchJSON(url, options = {}) {
+			const res = await fetch(url, options);
+			if (!res.ok) {
+				const text = await res.text();
+				throw new Error(text || `Request failed: ${res.status}`);
+			}
+			return res.json();
+		}
+		
+		function formatBytes(bytes) {
+			if (bytes === 0 || bytes == null) return '0 B';
+			const k = 1024;
+			const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+			const i = Math.floor(Math.log(bytes) / Math.log(k));
+			return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+		}
+		
+		async function loadStats() {
+			try {
+				const stats = await fetchJSON(`${apiBase}/stats`);
+				
+				document.getElementById('totalFiles').textContent = stats.fileCount;
+				document.getElementById('sharedFiles').textContent = stats.sharedCount;
+				
+				const storageBar = document.getElementById('storageBar');
+				storageBar.style.width = `${Math.min(stats.usagePercent, 100)}%`;
+				
+				document.getElementById('usedStorage').textContent = formatBytes(stats.totalSize);
+				document.getElementById('totalStorage').textContent = `of ${formatBytes(stats.storageLimit)}`;
+				document.getElementById('storageText').textContent = `${stats.usagePercent}% of storage used (${stats.fileCount} files)`;
+				
+				// Update plan info
+				const plan = stats.plan || 'free';
+				const planNames = { free: 'Free Plan', pro: 'Pro Plan', business: 'Business Plan' };
+				document.getElementById('currentPlan').textContent = planNames[plan] || 'Free Plan';
+				document.getElementById('planStorage').textContent = formatBytes(stats.storageLimit) + ' Storage';
+				document.getElementById('storagePlanBadge').textContent = planNames[plan] || 'Free Plan';
+				
+				// Change button if already upgraded
+				if (plan !== 'free') {
+					document.getElementById('upgradeBtn').innerHTML = '<i class="bi bi-check-circle me-2"></i>Already Upgraded';
+					document.getElementById('upgradeBtn').classList.remove('btn-gradient');
+					document.getElementById('upgradeBtn').classList.add('btn-success');
+					document.getElementById('upgradeBtn').removeAttribute('href');
+				}
+				
+				// Change color based on usage
+				if (stats.usagePercent > 90) {
+					storageBar.style.background = 'linear-gradient(90deg, #ef4444, #f87171)';
+				} else if (stats.usagePercent > 70) {
+					storageBar.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
+				}
+				
+			} catch (err) {
+				console.error('Failed to load stats:', err);
+				document.getElementById('storageText').innerHTML = `<span class="text-danger">Error: ${err.message}</span>`;
+				document.getElementById('totalFiles').textContent = '?';
+				document.getElementById('sharedFiles').textContent = '?';
+			}
+		}
+		
+		// Check for upgrade success message
+		const urlParams = new URLSearchParams(window.location.search);
+		if (urlParams.get('upgraded') === 'true') {
+			const plan = urlParams.get('plan') || 'pro';
+			alert(`Congratulations! You have successfully upgraded to the ${plan.toUpperCase()} plan!`);
+			// Clear the URL parameters
+			window.history.replaceState({}, document.title, '/profile');
+		}
+		
+		loadStats();
+	</script>
+</body>
+</html>
